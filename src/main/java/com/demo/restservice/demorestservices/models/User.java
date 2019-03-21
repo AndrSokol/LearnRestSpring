@@ -1,10 +1,12 @@
 package com.demo.restservice.demorestservices.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -14,7 +16,11 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
 public class User {
+
+    @Id
+    @GeneratedValue
     private Integer id;
 
     @Size(min = 2, message = "Name field should have at least 2 char")
@@ -22,6 +28,10 @@ public class User {
 
     @Past(message = "birthDay must be a past date ")
     private Date birthDay;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Post> posts;
 
     public User(Integer id, String name, Date birthDay) {
         this.id = id;

@@ -1,21 +1,26 @@
 package com.demo.restservice.demorestservices.services;
 
 import com.demo.restservice.demorestservices.dao.UserDao;
+import com.demo.restservice.demorestservices.dao.UserRepository;
 import com.demo.restservice.demorestservices.exceptions.UserNotFoundException;
 import com.demo.restservice.demorestservices.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
+//    @Autowired
+//    UserDao userDao;
+
     @Autowired
-    UserDao userDao;
+    UserRepository userRepository;
 
     public List<User> retrieveAllUsers(){
-        return userDao.findAll();
+        return userRepository.findAll();
     }
 
     public User retrieveById(Integer id) {
@@ -23,18 +28,21 @@ public class UserService {
     }
 
     public void removeById(Integer id) {
-        userDao.removeUser(getUser(id));
+//        userDao.removeUser(getUser(id));
+        userRepository.deleteById(id);
     }
 
     private User getUser(Integer id) {
-        User user = userDao.findOne(id);
-        if (user == null) {
+//        User user = userDao.findOne(id);
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
             throw new UserNotFoundException(String.format("User with id %s not found", id));
         }
-        return user;
+        return user.get();
     }
 
     public User create(User user) {
-        return userDao.save(user);
+//        return userDao.save(user);
+        return userRepository.save(user);
     }
 }
